@@ -1,0 +1,7 @@
+A_memcheck                     pass
+No memory leak found.
+No uninitialized value found.
+========================================
+ NOTICE: THIS TESTSUITE IS INCOMPLETE.
+YOU WILL BE GRADED ON OTHER TEST CASES.
+        WRITE YOUR OWN TESTS!

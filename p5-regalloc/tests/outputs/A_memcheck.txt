@@ -1,0 +1,93 @@
+main:
+  push BP
+  i2i SP => BP
+  addI SP, 0 => SP
+  loadI 4 => R0
+  i2i R0 => RET
+  jump l0
+l0:
+  i2i BP => SP
+  pop BP
+  return
+
+==========================
+sp=65536 bp=-9999999 ret=-9999999
+registers: 
+stack:
+other memory:
+==========================
+
+Executing: push BP
+
+==========================
+sp=65528 bp=-9999999 ret=-9999999
+registers: 
+stack:  65528: -9999999
+other memory:
+==========================
+
+Executing: i2i SP => BP
+
+==========================
+sp=65528 bp=65528 ret=-9999999
+registers: 
+stack:  65528: -9999999
+other memory:
+==========================
+
+Executing: addI SP, 0 => SP
+
+==========================
+sp=65528 bp=65528 ret=-9999999
+registers: 
+stack:  65528: -9999999
+other memory:
+==========================
+
+Executing: loadI 4 => R0
+
+==========================
+sp=65528 bp=65528 ret=-9999999
+registers:  R0=4
+stack:  65528: -9999999
+other memory:
+==========================
+
+Executing: i2i R0 => RET
+
+==========================
+sp=65528 bp=65528 ret=4
+registers:  R0=4
+stack:  65528: -9999999
+other memory:
+==========================
+
+Executing: jump l0
+
+==========================
+sp=65528 bp=65528 ret=4
+registers:  R0=4
+stack:  65528: -9999999
+other memory:
+==========================
+
+Executing: i2i BP => SP
+
+==========================
+sp=65528 bp=65528 ret=4
+registers:  R0=4
+stack:  65528: -9999999
+other memory:
+==========================
+
+Executing: pop BP
+
+==========================
+sp=65536 bp=-9999999 ret=4
+registers:  R0=4
+stack:
+other memory:  65528: -9999999
+==========================
+
+Executing: return
+RETURN VALUE = 4
