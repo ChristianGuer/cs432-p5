@@ -1,0 +1,227 @@
+fact:
+  push BP
+  i2i SP => BP
+  addI SP, -8 => SP
+  loadAI [BP+16] => R0
+  loadI 1 => R1
+  cmp_LE R0, R1 => R0
+  cbr R0 => l1, l2
+l1:
+  loadI 1 => R0
+  i2i R0 => RET
+  jump l0
+l2:
+  loadAI [BP+16] => R0
+  loadAI [BP+16] => R1
+  loadI 1 => R2
+  sub R1, R2 => R1
+  push R1
+  storeAI R0 => [BP-8]
+  call fact
+  addI SP, 8 => SP
+  i2i RET => R0
+  loadAI [BP-8] => R1
+  mult R1, R0 => R0
+  i2i R0 => RET
+  jump l0
+l0:
+  i2i BP => SP
+  pop BP
+  return
+fib:
+  push BP
+  i2i SP => BP
+  addI SP, -8 => SP
+  loadAI [BP+16] => R0
+  loadI 0 => R1
+  cmp_LE R0, R1 => R0
+  cbr R0 => l4, l5
+l4:
+  loadI 0 => R0
+  i2i R0 => RET
+  jump l3
+l5:
+  loadAI [BP+16] => R0
+  loadI 1 => R1
+  cmp_EQ R0, R1 => R0
+  cbr R0 => l6, l7
+l6:
+  loadI 1 => R0
+  i2i R0 => RET
+  jump l3
+l7:
+  loadAI [BP+16] => R0
+  loadI 1 => R1
+  sub R0, R1 => R0
+  push R0
+  call fib
+  addI SP, 8 => SP
+  i2i RET => R0
+  loadAI [BP+16] => R1
+  loadI 2 => R2
+  sub R1, R2 => R1
+  push R1
+  storeAI R0 => [BP-8]
+  call fib
+  addI SP, 8 => SP
+  i2i RET => R0
+  loadAI [BP-8] => R1
+  add R1, R0 => R0
+  i2i R0 => RET
+  jump l3
+l3:
+  i2i BP => SP
+  pop BP
+  return
+is_prime:
+  push BP
+  i2i SP => BP
+  addI SP, -8 => SP
+  loadAI [BP+16] => R0
+  loadI 2 => R1
+  div R0, R1 => R0
+  loadI 1 => R1
+  add R0, R1 => R0
+  storeAI R0 => [BP-8]
+  loadAI [BP+16] => R0
+  loadI 1 => R1
+  cmp_LE R0, R1 => R0
+  cbr R0 => l9, l10
+l9:
+  loadI 0 => R0
+  i2i R0 => RET
+  jump l8
+l10:
+l11:
+  loadAI [BP-8] => R0
+  loadI 1 => R1
+  cmp_GT R0, R1 => R0
+  cbr R0 => l12, l13
+l12:
+  loadAI [BP+16] => R0
+  loadAI [BP-8] => R1
+  div R0, R1 => R2
+  mult R1, R2 => R1
+  sub R0, R1 => R0
+  loadI 0 => R1
+  cmp_EQ R0, R1 => R0
+  cbr R0 => l14, l15
+l14:
+  loadI 0 => R0
+  i2i R0 => RET
+  jump l8
+l15:
+  loadAI [BP-8] => R0
+  loadI 1 => R1
+  sub R0, R1 => R0
+  storeAI R0 => [BP-8]
+  jump l11
+l13:
+  loadI 1 => R0
+  i2i R0 => RET
+  jump l8
+l8:
+  i2i BP => SP
+  pop BP
+  return
+test_fact:
+  push BP
+  i2i SP => BP
+  addI SP, -8 => SP
+  loadAI [BP+16] => R0
+  push R0
+  call fact
+  addI SP, 8 => SP
+  i2i RET => R0
+  storeAI R0 => [BP-8]
+  loadAI [BP-8] => R0
+  print R0
+  loadAI [BP-8] => R0
+  loadAI [BP+24] => R1
+  cmp_NE R0, R1 => R0
+  cbr R0 => l17, l18
+l17:
+  print \" INCORRECT!\"
+l18:
+  print \"\\n\"
+  jump l16
+l16:
+  i2i BP => SP
+  pop BP
+  return
+test_prime:
+  push BP
+  i2i SP => BP
+  addI SP, -8 => SP
+  loadAI [BP+16] => R0
+  push R0
+  call is_prime
+  addI SP, 8 => SP
+  i2i RET => R0
+  storeAI R0 => [BP-8]
+  loadAI [BP-8] => R0
+  print R0
+  loadAI [BP-8] => R0
+  loadAI [BP+24] => R1
+  cmp_NE R0, R1 => R0
+  cbr R0 => l20, l21
+l20:
+  print \" INCORRECT!\"
+l21:
+  print \"\\n\"
+  jump l19
+l19:
+  i2i BP => SP
+  pop BP
+  return
+main:
+  push BP
+  i2i SP => BP
+  addI SP, 0 => SP
+  loadI 5 => R0
+  loadI 120 => R1
+  push R1
+  push R0
+  call test_fact
+  addI SP, 16 => SP
+  loadI 0 => R0
+  loadI 1 => R1
+  push R1
+  push R0
+  call test_fact
+  addI SP, 16 => SP
+  loadI 1 => R0
+  loadI 0 => R1
+  push R1
+  push R0
+  call test_prime
+  addI SP, 16 => SP
+  loadI 7 => R0
+  loadI 1 => R1
+  push R1
+  push R0
+  call test_prime
+  addI SP, 16 => SP
+  loadI 8 => R0
+  loadI 0 => R1
+  push R1
+  push R0
+  call test_prime
+  addI SP, 16 => SP
+  loadI 100 => R0
+  loadI 0 => R1
+  push R1
+  push R0
+  call test_prime
+  addI SP, 16 => SP
+l22:
+  i2i BP => SP
+  pop BP
+  return
+120
+1
+0
+1
+0
+0
+RETURN VALUE = 0

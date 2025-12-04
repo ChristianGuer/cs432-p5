@@ -1,0 +1,81 @@
+fact:
+  push BP
+  i2i SP => BP
+  addI SP, -8 => SP
+  loadAI [BP+16] => R0
+  loadI 1 => R1
+  cmp_LE R0, R1 => R0
+  cbr R0 => l1, l2
+l1:
+  loadI 1 => R0
+  i2i R0 => RET
+  jump l0
+l2:
+  loadAI [BP+16] => R0
+  loadAI [BP+16] => R1
+  loadI 1 => R2
+  sub R1, R2 => R1
+  push R1
+  storeAI R0 => [BP-8]
+  call fact
+  addI SP, 8 => SP
+  i2i RET => R0
+  loadAI [BP-8] => R1
+  mult R1, R0 => R0
+  i2i R0 => RET
+  jump l0
+l0:
+  i2i BP => SP
+  pop BP
+  return
+test_fact:
+  push BP
+  i2i SP => BP
+  addI SP, -8 => SP
+  loadAI [BP+16] => R0
+  push R0
+  call fact
+  addI SP, 8 => SP
+  i2i RET => R0
+  storeAI R0 => [BP-8]
+  loadAI [BP-8] => R0
+  print R0
+  loadAI [BP-8] => R0
+  loadAI [BP+24] => R1
+  cmp_NE R0, R1 => R0
+  cbr R0 => l4, l5
+l4:
+  print \" INCORRECT!\"
+l5:
+  print \"\\n\"
+  jump l3
+l3:
+  i2i BP => SP
+  pop BP
+  return
+main:
+  push BP
+  i2i SP => BP
+  addI SP, 0 => SP
+  loadI 5 => R0
+  loadI 120 => R1
+  push R1
+  push R0
+  call test_fact
+  addI SP, 16 => SP
+  loadI 0 => R0
+  loadI 1 => R1
+  push R1
+  push R0
+  call test_fact
+  addI SP, 16 => SP
+  loadI 0 => R0
+  i2i R0 => RET
+  jump l6
+l6:
+  i2i BP => SP
+  pop BP
+  return
+120
+1
+RETURN VALUE = 0

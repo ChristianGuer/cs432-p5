@@ -1,0 +1,27 @@
+def int fact(int n)
+{
+
+    if( n <= 1){
+        return 1;
+    }
+    return n * fact( n - 1);
+}
+
+def void test_fact(int a, int correct)
+{
+    int f;
+    f = fact(a);
+    print_int(f);
+    if (f != correct) {
+        print_str(" INCORRECT!");
+    }
+    print_str("\n");
+    return;
+}
+
+def int main()
+{
+    test_fact(5, 120);
+    test_fact(0, 1);
+    return 0;
+}

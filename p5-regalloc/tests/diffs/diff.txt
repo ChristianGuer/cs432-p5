@@ -1,0 +1,78 @@
+--- tests/expected/myp0.txt	2025-12-03 17:01:13.483900169 -0500
++++ ./tests/expected/refp0.txt	2025-12-03 16:11:28.519199130 -0500
+@@ -1,7 +1,7 @@
+ fact:
+   push BP
+   i2i SP => BP
+-  addI SP, 0 => SP
++  addI SP, -8 => SP
+   loadAI [BP+16] => R0
+   loadI 1 => R1
+   cmp_LE R0, R1 => R0
+@@ -31,7 +31,7 @@
+ fib:
+   push BP
+   i2i SP => BP
+-  addI SP, 0 => SP
++  addI SP, -8 => SP
+   loadAI [BP+16] => R0
+   loadI 0 => R1
+   cmp_LE R0, R1 => R0
+@@ -61,11 +61,11 @@
+   loadI 2 => R2
+   sub R1, R2 => R1
+   push R1
+-  storeAI R0 => [BP-16]
++  storeAI R0 => [BP-8]
+   call fib
+   addI SP, 8 => SP
+   i2i RET => R0
+-  loadAI [BP-16] => R1
++  loadAI [BP-8] => R1
+   add R1, R0 => R0
+   i2i R0 => RET
+   jump l3
+@@ -199,7 +199,7 @@
+ sort_nums:
+   push BP
+   i2i SP => BP
+-  addI SP, -8 => SP
++  addI SP, -16 => SP
+   loadAI [BP+16] => R0
+   loadI 1 => R1
+   cmp_LT R0, R1 => R0
+@@ -226,13 +226,13 @@
+   loadAO [R1+R2] => R1
+   loadI 256 => R2
+   loadAI [BP+16] => R3
+-  storeAI R0 => [BP-24]
++  storeAI R0 => [BP-16]
+   loadI 1 => R0
+   sub R3, R0 => R0
+   multI R0, 8 => R0
+   loadAO [R2+R0] => R0
+   cmp_LT R1, R0 => R0
+-  loadAI [BP-24] => R1
++  loadAI [BP-16] => R1
+   and R1, R0 => R0
+   cbr R0 => l31, l32
+ l31:
+@@ -628,4 +628,17 @@
+   i2i BP => SP
+   pop BP
+   return
+-ERROR: Stack overflow
++120
++1
++0
++1
++0
++0
++5
++1
++25
++21
++0
++Unsorted: 5 3 8 1 
++hihihihiSorted: 1 3 4 5 
++RETURN VALUE = 0

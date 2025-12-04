@@ -4,6 +4,7 @@
  */
 #include "p5-regalloc.h"
 
+
 /**
  * @brief Replace a virtual register id with a physical register id
  *
@@ -44,6 +45,7 @@ void replace_register(int vr, int pr, ILOCInsn *insn)
 int insert_spill(int pr, ILOCInsn *prev_insn, ILOCInsn *local_allocator)
 {
     /* adjust stack frame size to add new spill slot */
+
     int bp_offset = local_allocator->op[1].imm - WORD_SIZE;
     local_allocator->op[1].imm = bp_offset;
 
@@ -79,8 +81,10 @@ void insert_load(int bp_offset, int pr, ILOCInsn *prev_insn)
 
 void spill(int pr, ILOCInsn *prev_insn, ILOCInsn *local_allocator, int *offset_arr, int *phys_reg_map)
 {
+
+    //if (offset_arr[phys_reg_map[pr]] != -1)
     int offset = insert_spill(pr, prev_insn, local_allocator);
-    offset_arr[phys_reg_map[pr]] = offset;
+    offset_arr[phys_reg_map[pr]] = offset;//-word_size?
     phys_reg_map[pr] = -1;
 }
 
@@ -147,6 +151,7 @@ int ensure(int *phys_reg_map, int num_physical_registers, int vr, ILOCInsn *curr
         }
     }
     int pr = allocate(phys_reg_map, num_physical_registers, vr, current_insn, local_allocator_insn, offset_arr, prev_insn);
+    
     if (offset_arr[vr] != -1)
     {
         insert_load(offset_arr[vr], pr, prev_insn);
@@ -156,6 +161,12 @@ int ensure(int *phys_reg_map, int num_physical_registers, int vr, ILOCInsn *curr
 
 void allocate_registers(InsnList *list, int num_physical_registers)
 {
+    //BIggest issue is “I’m treating the wrong addI SP, imm => SP as the stack allocator inside fib.”
+    if (num_physical_registers <= 0) {
+        fprintf(stderr, "Error: no physical registers available for allocation\n");
+    exit(1);
+    }
+
     if (!list)
     {
         return;
@@ -169,24 +180,26 @@ void allocate_registers(InsnList *list, int num_physical_registers)
     }
 
     // offset array TODO determine if there is a better way to set size
+    //Is this True?  No virtual registers are live across function boundaries. 
+    //that would mean we have to reset offsets at each function and same for phys reg map
     int offset_arr[MAX_VIRTUAL_REGS];
     for (int i = 0; i < MAX_VIRTUAL_REGS; i++)
     {
         // set as invalid
         offset_arr[i] = -1;
     }
-    // save reference to stack allocator instruction if i is a call label
-    ILOCInsn *local_allocator_insn = list->head;
-    if (local_allocator_insn != NULL && local_allocator_insn->next != NULL && local_allocator_insn->next->next != NULL)
-    {
-        local_allocator_insn = local_allocator_insn->next->next;
-    }
 
     // save previous instruction
+    ILOCInsn *local_allocator_insn = NULL;
     ILOCInsn *last_processed_insn = NULL;
 
     FOR_EACH(ILOCInsn *, insn, list)
     {
+        // save reference to stack allocator instruction if i is a call label
+        //Save local allocator when the first instruction after a PUSH is an I2I and the next is an ADD_I
+        if(insn->form == PUSH && insn->next != NULL && insn->next->form == I2I && insn->next->next != NULL && insn->next->next->form == ADD_I) {
+            local_allocator_insn = insn->next->next;
+        }
         ILOCInsn *read_regs = ILOCInsn_get_read_registers(insn);
         // for each read vr in insn:
         for (int i = 0; i < 3; i++)
